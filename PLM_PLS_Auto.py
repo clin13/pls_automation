@@ -1,11 +1,18 @@
 #!/usr/bin/env python
 # encoding: utf-8
+'''
+@Author:     Jack C Lin
+@Copyright:  2015 Trend Micro Inc. All rights reserved.
+@License:    license
+@Contact:    jack_c_Lin@trend.com.tw
+@Date        Jan 19 2015
+'''
 
 import sys
 import os
-import urllib2
+import urllib.request
 import zipfile
-import ConfigParser
+import configparser
 import shutil
 import time
 import datetime
@@ -39,16 +46,16 @@ def GetPLSVersion(product, INI_FILE, pls_path, i):
     Language_name = ("EN", "DE", "ES", "FR", "IT", "RU", "PO", "KO", "TC", "JP", "CN")
     L = 0                                   # Language index
 
-    Cfg = ConfigParser.ConfigParser()
+    Cfg = configparser.ConfigParser()
     Cfg.read(INI_FILE)
 
     for L_ID in Language_ID:
         # Create PLM/PLS list files with version by language
         f_name = pls_path+'/'+Language_name[L]+'.csv'
         if (os.path.exists(f_name)):
-            fd = open(f_name, 'ab+')
+            fd = open(f_name, 'a+')
         else:
-            fd = open(f_name, 'wb+')
+            fd = open(f_name, 'w+')
 
         L += 1
         f = csv.writer(fd, delimiter = ",", lineterminator="\n", quoting=csv.QUOTE_MINIMAL)
@@ -105,7 +112,7 @@ def GetPLSVersion(product, INI_FILE, pls_path, i):
         time.sleep(0.3)
 
 def GetComponentList(prdct, INI, dir, i, logger):
-    cfg = ConfigParser.ConfigParser()
+    cfg = configparser.ConfigParser()
     cfg.read(INI)
     loop = 1
     loop_enable = 0
@@ -159,24 +166,24 @@ def GetComponentList(prdct, INI, dir, i, logger):
                 buf = ''
 
                 try:
-                    buf = urllib2.urlopen(full_path)  # Download component list
+                    buf = urllib.request.urlopen(full_path)  # Download component list
                 except urllib2.URLError as err:
                     msg = 'Can not download '+zipfile_path+'\n'
-                    print str(err.reason)
-                    print msg
+                    print(str(err.reason))
+                    print(msg)
                     logger.debug(str(err.reason))
                     logger.debug(msg)
                     return
                 except urllib2.HTTPError as err:
                     msg = 'Can not download '+zipfile_path+'\n'
-                    print str(err.code)
-                    print msg
+                    print(str(err.code))
+                    print(msg)
                     logger.debug(str(err.reason))
                     logger.debug(msg)
                     return
 
                 relative_path = prdct+'/'+lang_dir+'/'+zipfile
-                print 'Download '+relative_path
+                print('Download '+relative_path)
                 try:
                     file = open(zipfile_path, 'wb')
                 except IOERROR:
@@ -192,7 +199,7 @@ def GetComponentList(prdct, INI, dir, i, logger):
                 else:
                     data = buf.read()
                     file.write(data)
-                    print '..Retry writing data'
+                    print('..Retry writing data')
                 time.sleep(1)               # In case of file not written successfully
                 CmpntLstCount+=1
                 file.close()
@@ -210,19 +217,19 @@ def GetServerINI(p, p_URL, dir, i, pls_path, logger):
         lan = '_cn_'
 
     try:
-        res = urllib2.urlopen(p_URL)        # Open URL of AU's server.ini
-    except urllib2.URLError as e:
+        res = urllib.request.urlopen(p_URL)        # Open URL of AU's server.ini
+    except urllib.error.URLError as e:
         Reason = str(e.reason)
         msg = 'Can not download '+p+lan+'server.ini\n'
-        print Reason
-        print msg
+        print(Reason)
+        print(msg)
         logger.debug(Reason)
         logger.debug(msg)
         return
-    except urllib2.HTTPError as e:
+    except urllib.error.HTTPError as e:
         msg = 'Can not download '+p+lan+'server.ini\n'
-        print str(e.code)
-        print msg
+        print(str(e.code))
+        print(msg)
         logger.debug(str(e.code))
         logger.debug(msg)
         return
@@ -241,13 +248,13 @@ def GetServerINI(p, p_URL, dir, i, pls_path, logger):
     global INICount
     INICount+=1
 
-    print "Download %s%s"%(p, lan)+"server.ini"
+    print("Download %s%s"%(p, lan)+"server.ini")
     GetComponentList(p, INI_FILE, dir, i, logger)
 
 def Init(argv=None):
-    print '--------------------------------------------------------------'
-    print 'PLM_PLS_Automation v'+str(__version__)+'  Release date: '+__date__
-    print '--------------------------------------------------------------'
+    print('--------------------------------------------------------------')
+    print('PLM_PLS_Automation v'+str(__version__)+'  Release date: '+__date__)
+    print('--------------------------------------------------------------')
     now = datetime.datetime.now()           # Get current time
     str_now = str(now.year)+"_"+str(now.month)+"_"+str(now.day)+"_"+str(now.hour)+"_"+str(now.minute)+"_"+str(now.second)
     root_dir = os.path.join(os.path.abspath(os.getcwd()), str_now+"_"+"Component_Lists")
@@ -277,7 +284,7 @@ def Init(argv=None):
             p_URL = URL_head + p + t
             GetServerINI(p, p_URL, os.path.join(tmp_root, p), i, pls_path, logger)
             i+=1
-    print '\nCreating PLS version files by language'
+    print('\nCreating PLS version files by language')
 
     for prdct in product:
         tmp = root_dir
@@ -288,13 +295,13 @@ def Init(argv=None):
             GetPLSVersion(prdct, INI_path, pls_path, j)
             j += 1
         
-    print '\nMerge all csv files to a Excel file'
+    print('\nMerge all csv files to a Excel file')
     MergeCSV(pls_path)
 
     global CmpntLstCount
     global INICount
-    print '\nServer.ini:      '+str(INICount)+' file(s)'
-    print 'Component list:  '+str(CmpntLstCount)+' file(s)\n'
+    print('\nServer.ini:      '+str(INICount)+' file(s)')
+    print('Component list:  '+str(CmpntLstCount)+' file(s)\n')
 
 if __name__ == '__main__':
     sys.exit(Init())

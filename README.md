@@ -1,8 +1,9 @@
 # pls_automation
 Steps:
 
-1. Install Python 2.x (Ex: Python 2.7.9)
-2. Install xlwt 0.7.5
+1.a - Python 2
+   Install Python 2.x (Ex: Python 2.7.9)
+   Install xlwt 0.7.5
    https://pypi.python.org/pypi/xlwt
    Description:
    Library to create spreadsheet files compatible with MS Excel 
@@ -10,21 +11,31 @@ Steps:
 
    Extract xlwt-0.7.5.tar.gz to C:\Python27\Lib\site-packages\xlwt-0.7.5
    Open command line prompt
+
    [Commands]
    cd C:\Python27\Lib\site-packages\xlwt-0.7.5
    python setup.py install
 
-3. Save CompList.py and Automation.bat in any folder
-4. Run Automation.bat
-5. Create the following directories and files
+1.b - Python 3
+   Install Python 3.7 (Ex: Python 3.7.2)
+   Install xlwt - $pip install xlwt
+
+2. Save CompList.py and Automation.bat in any folder
+3. Run Automation.bat
+4. Create the following directories and files
    a. Root directory - Date__Component_Lists.
+
    b. There are all product folders and pls_by_lang folder.
+
    c. Server.ini are in product folder.
+
    d. Component lists are in the folder by language in product folder.
+
    e. CSV files with PLM/PLS version are in the pls_by_lang folder.
+
    f. A log file called pls.log in the root directory.
    
-6. An Excel file "PLM_PLS_List.xls" in the root directory. Each worksheet,
+5. An Excel file "PLM_PLS_List.xls" in the root directory. Each worksheet,
    by language, collects PLM and PLS version by products.
 
 Note: 
