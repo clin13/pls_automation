@@ -11,6 +11,7 @@
 import sys
 import os
 import urllib.request
+import urllib.error
 import zipfile
 import configparser
 import shutil
@@ -167,14 +168,14 @@ def GetComponentList(prdct, INI, dir, i, logger):
 
                 try:
                     buf = urllib.request.urlopen(full_path)  # Download component list
-                except urllib2.URLError as err:
+                except urllib.error.URLError as err:
                     msg = 'Can not download '+zipfile_path+'\n'
                     print(str(err.reason))
                     print(msg)
                     logger.debug(str(err.reason))
                     logger.debug(msg)
                     return
-                except urllib2.HTTPError as err:
+                except urllib.error.HTTPError as err:
                     msg = 'Can not download '+zipfile_path+'\n'
                     print(str(err.code))
                     print(msg)
